@@ -1,0 +1,50 @@
+# ==========================================
+# Python & Environment
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+ENV/
+.env
+
+# ==========================================
+# IDEs & System Files
+# ==========================================
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# ==========================================
+# Heavy Model Weights & Checkpoints (GBs)
+# ==========================================
+best_deberta_model/
+best_parsbert_model/
+best_relation_model/
+local_model/
+deberta_finetuned/
+parsbert_finetuned/
+relation_finetuned/
+checkpoint-*/
+
+# ==========================================
+# Datasets & Processed Data
+# ==========================================
+aligned_ner_dataset/
+data/
+*.xlsx
+*.csv
+# حفظ ساختار پوشه data بدون فایل‌های سنگین
+!data/.gitkeep
+
+# ==========================================
+# Generated Submission JSONs & API Logs
+# ==========================================
+submission*.json
+final_corrected_data.json
+structured_gazette_results.json
+relation_classification_dataset.json
+*.log
