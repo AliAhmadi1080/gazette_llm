@@ -34,7 +34,7 @@
 ├── precision_booster.py          # ماژول کالیبراسیون و فیلتر قوانین گرامری
 ├── select_batch_2000.py          # انتخاب بچ‌های هدفمند ۲۰۰۰ تایی
 ├── solve_phase3_master.py        # موتور جامع استخراج و تجمیع پروفایل افراد هدف
-├── train_parsbert_local.py       # فاین‌تیونینگ مدل ParsBERT / DeBERTa برای NER
+├── train_parsbert_local.py       # فاین‌تیونینگ مدل ParsBERT برای NER
 ├── train_relation_classifier.py  # فاین‌تیونینگ مدل دوم برای دسته‌بندی روابط
 └── requirements.txt              # نیازمندی‌های پروژه
 ```
@@ -131,7 +131,7 @@ python build_relation_dataset.py
 ```
 
 ### گام سوم: فاین‌تیونینگ مدل‌ها
-آموزش مدل‌های ParsBERT/DeBERTa برای NER و مدل دوم برای دسته‌بندی روابط:
+آموزش مدل‌های ParsBERT برای NER و مدل دوم برای دسته‌بندی روابط:
 ```bash
 python train_parsbert_local.py
 python train_relation_classifier.py

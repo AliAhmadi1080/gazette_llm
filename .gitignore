@@ -21,11 +21,9 @@ ENV/
 # ==========================================
 # Heavy Model Weights & Checkpoints (GBs)
 # ==========================================
-best_deberta_model/
 best_parsbert_model/
 best_relation_model/
 local_model/
-deberta_finetuned/
 parsbert_finetuned/
 relation_finetuned/
 checkpoint-*/
