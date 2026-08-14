@@ -92,7 +92,6 @@ training_args = TrainingArguments(
     per_device_eval_batch_size=32,    
     num_train_epochs=15,              
     weight_decay=0.05,                
-    warmup_ratio=0.1,                 
     logging_steps=10,
     bf16=True,                        # <--- فعال‌سازی BF16 برای پایداری در کارت گرافیک شما
     fp16=False,                       
