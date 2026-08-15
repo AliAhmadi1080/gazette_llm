@@ -1,152 +1,76 @@
-# 🏛️ Iranian Official Gazette Information Extraction & Identity Resolution
+# 🏛️ AI-Newspaper: Official Gazette Entity & Relation Extraction
+### IranAI 1404 - Research Institute for ICT Challenge
 
-پایپ‌لاین هوشمند پردازش، استخراج موجودیت‌های نامدار (NER)، بازسازی روابط (Relation Extraction) و یکپارچه‌سازی هویت (Identity Resolution) از متون حقوقی و غیرساخت‌یافته آگهی‌های روزنامه رسمی ایران.
-
----
-
-## 🎯 ویژگی‌های کلیدی پروژه
-
-* **معماری دو مرحله‌ای (Two-Stage Pipeline):**
-  * **فاز ۱ (NER):** شناسایی ۱۳ نوع موجودیت حقوقی (اشخاص، کدهای ملی، سمت‌ها، نام شرکت‌ها، شناسه‌های ملی، آدرس، مدت فعالیت و...).
-  * **فاز ۲ (Relation Classification):** دسته‌بندی ۲۶ نوع رابطه ساختاری و مدیریتی بین موجودیت‌های استخراج‌شده.
-* **تقویت و تقطیر داده با LLMها:** استفاده از مدل‌های Gemini و DeepSeek جهت ممیزی داده و تولید داده‌های آموزشی مصنوعی با کیفیت بالا.
-* **شکار نمونه‌های هدفمند (Active Learning):** اسکن هوشمند اکسل برای استخراج متون دارای بیشترین ارزش اطلاعاتی و تمرکز روی کلاس‌های ضعیف.
-* **پس‌پردازش و کالیبراسیون اطمینان (Precision Booster):** 
-  * کالیبراسیون احتمالات Softmax جهت بالابردن دقت (Precision).
-  * اعمال الگوریتم Checksum باقی‌مانده تقسیم بر ۱۱ برای صحت‌سنجی کدهای ملی ایران.
-  * تصحیح گرامری توالی‌های BIO.
+این مخزن شامل کدبیس کامل، پایپ‌لاین‌های داده، اسکریپت‌های آموزش مدل‌های عمیق و موتورهای استخراج پروفایل برای مسابقه «استخراج موجودیت‌ها و روابط حقوقی از متون روزنامه رسمی» است.
 
 ---
 
-## 📁 ساختار پروژه
+## 📊 نتایج ارزیابی نهایی (Leaderboard Benchmarks)
+
+* **روش اول (موتور ترکیبی الگو و لنگرکشی):** **Macro Score: 70.93%** | Micro Precision: 84.54%
+  * `PERSON`: **F1 = 90.14%** (Precision = 100%)
+  * `PERSONAL_ID`: **F1 = 96.27%** (Precision = 100%)
+* **روش دوم (پایپ‌لاین عمیق ParsBERT + Relation Classifier):** **Macro Score: 58.42%** | Micro Precision: 76.29%
+
+---
+
+## 📁 ساختار دایرکتوری‌ها و فایل‌های پروژه
 
 ```text
-├── data/                         # پوشه داده‌ها (اکسل‌ها و فایل‌های JSON)
-├── aligned_ner_dataset/          # دیتاست هم‌ترازی‌شده برای مدل‌های Transformer
-├── a.py                          # تست‌های سریع و ایزوله
-├── active_learning_scanner.py    # اسکنر متون دارای کلمات کلیدی بحرانی
-├── build_relation_dataset.py     # ساخت دیتاست برای مدل دسته‌بندی روابط
-├── calibrate_threshold.py        # کالیبراسیون آستانه اطمینان مدل NER
-├── class_diagnostics.py          # ارزیابی تفکیک‌شده کلاس‌به‌کلاس (Precision/Recall/F1)
-├── clean_final_submission.py     # جلاکاری نهایی و حذف کدهای ملی سرایت‌کرده
-├── gemini_pipeline.py            # پایپ‌لاین موازی استخراج و ممیزی با Google Gemini API
-├── pipeline_inference_phase3.py  # پایپ‌لاین استنباط نهایی
-├── precision_booster.py          # ماژول کالیبراسیون و فیلتر قوانین گرامری
-├── select_batch_2000.py          # انتخاب بچ‌های هدفمند ۲۰۰۰ تایی
-├── solve_phase3_master.py        # موتور جامع استخراج و تجمیع پروفایل افراد هدف
-├── train_parsbert_local.py       # فاین‌تیونینگ مدل ParsBERT برای NER
-├── train_relation_classifier.py  # فاین‌تیونینگ مدل دوم برای دسته‌بندی روابط
-└── requirements.txt              # نیازمندی‌های پروژه
+AI-NEWSPAPER/
+├── data/                               # پوشه ذخیره‌سازی داده‌های خام و پردازش‌شده
+│   ├── train-data.xlsx                 # فایل اکسل داده‌های آموزشی
+│   ├── train.xlsx / validation.xlsx    # اسناد اصلی مسابقه
+│   ├── validation_people_names.csv     # لیست ۱۵۳ فرد هدف
+│   ├── final_corrected_data.json       # ۵,۵۲۰ دادهٔ ممیزی‌شده
+│   └── label_mapping.json              # نگاشت لیبل‌های ۱۳‌گانه
+├── aligned_ner_dataset/                # دیتاست هم‌تراز‌شده توکن‌ها برای ParsBERT
+├── best_parsbert_model/                # بهترین وزن‌های ذخیره‌شده مدل NER (ParsBERT)
+├── best_relation_model/                # بهترین وزن‌های ذخیره‌شده مدل دوم (Relation Classifier)
+├── local_model/                        # وزن‌های مدل پایه
+├── active_learning_scanner.py          # اسکنر Active Learning برای شکار کلاس‌های کمیاب
+├── build_relation_dataset.py           # ساخت دیتابیس روابط با توکن‌های نشانه‌گذار [S:TYPE]
+├── calibrate_threshold.py              # کالیبراسیون آستانه اطمینان Softmax
+├── class_diagnostics.py                # اسکریپت آنالیز جراحی و خطای کلاس‌به‌کلاس
+├── clean_final_submission.py           # جلاکاری و پاکسازی کدهای ملی سرایت‌کرده
+├── gemini_pipeline.py                  # پایپ‌لاین استخراج ابری موازی با Google Gemini API
+├── pipeline_inference_phase3.py        # استنباط یکپارچه دو مدله (NER + RE)
+├── precision_booster.py                # ماژول تقویت دقت و اصلاح گرامر توکن‌ها
+├── solve_phase3_excel.py               # موتور استخراج لنگری محلی (ثبت امتیاز ۷۰.۹۳٪ لیدربورد)
+├── train_parsbert_local.py             # آموزش مدل اول (ParsBERT NER) با BF16 و Seed Lock
+└── train_relation_classifier.py        # آموزش مدل دوم (Relation Classifier)
 ```
 
 ---
 
-## 📂 راهنمای ساختار دایرکتوری داده‌ها و مدل محلی
+## 🚀 نحوه اجرای پروژه
 
-جهت اجرای صحیح پایپ‌لاین، پوشه‌های `data/` و `local_model/` باید دارای ساختار و فایل‌های زیر باشند:
-
----
-
-### ۱. دایرکتوری داده‌ها (`data/`)
-
-این پوشه شامل داده‌های خام ورودی مسابقه و داده‌های تولیدشده در طول مراحل مختلف پایپ‌لاین است:
-
-#### 🔹 فایل‌های ورودی خام مسابقه (Raw Input Files):
-* **`train.xlsx` / `train-data.xlsx` / `train.csv`**: داده‌های آموزشی خام شامل متون آگهی‌های روزنامه رسمی.
-* **`validation.xlsx` / `validation.csv`**: متون روزنامه رسمی فاز ارزیابی/بهبود.
-* **`validation_people_names.csv`**: فهرست افراد هدف فاز ارزیابی شامل ستون‌های `query_id` و `name`.
-* **`base.xlsx`** *(در صورت وجود)*: متون پایه مرجع برای بازیابی اطلاعات هویتی حذف‌شده.
-
-#### 🔹 فایل‌های تولیدشده توسط پایپ‌لاین (Generated Pipeline Files):
-* **`structured_gazette_results.json`**: خروجی استخراج اولیه فاز ۱ توسط LLM (Gemini / DeepSeek).
-* **`final_corrected_data.json`**: خروجی ممیزی و تصحیح‌شده فاز ۲.
-* **`label_mapping.json`**: نقشه نگاشت برچسب‌های موجودیت (NER) به شناسه (`label_to_id` و `id_to_label`).
-* **`relation_classification_dataset.json`**: دیتابیس ساخته‌شده جهت آموزش مدل دسته‌بندی روابط.
-* **`relation_special_tokens.json`**: لیست ۵۲ توکن ویژه نشانه‌گذار موجودیت‌ها جهت اضافه شدن به توکنایزر.
-* **`selected_batch_indices.json` / `high_value_indices.json`**: ایندکس‌های انتخاب‌شده توسط Active Learning برای نمونه‌های طلایی و سخت.
-* **`official_gazette_results.json` / `refined_gazette_results.json`**: فایل‌های میانی ممیزی و پالایش متون.
-
----
-
-### ۲. دایرکتوری مدل محلی (`local_model/`)
-
-این پوشه حاوی وزنی‌های دانلودشدهٔ **مدل پایه ترنسفورمر فارسی (ParsBERT)** است که فاین‌تیونینگ مدل‌های NER و دسته‌بندی روابط بر پایه آن انجام می‌شود.
-
-#### 🔹 مدل پایه مورد نیاز:
-* **نام مدل اصلی:** `HooshvareLab/bert-fa-zwnj-base` (مدل پارس‌برت با پشتیبانی از نیم‌فاصله).
-
-#### 🔹 فایل‌های ضروری داخل پوشه `local_model/`:
-برای اینکه کد بتواند مدل را به‌صورت آفلاین بارگذاری کند، فایل‌های زیر باید درون این پوشه قرار داشته باشند:
-* **`config.json`**: پیکربندی معماری مدل.
-* **`pytorch_model.bin`**: وزن‌های خام آموزش‌دیدهٔ مدل Pytorch.
-* **`tokenizer_config.json`**: تنظیمات توکنایزر پارس‌برت.
-* **`special_tokens_map.json`**: نقشه توکن‌های ویژه توکنایزر.
-* *(در صورت دانلود کامل)* **`vocab.txt`** یا **`tokenizer.json`**: واژه‌نامه توکن‌ها.
-
-> **نکته مهم:** محتویات هر دو پوشه `data/` و `local_model/` به دلیل حجم بالا و عدم آپلود کلیدهای حساس در فایل `.gitignore` استثنا شده‌اند و باید پیش از اجرای کد به صورت محلی در مسیرهای فوق قرار گیرند.
-
-## 🚀 راهنمای نصب و راه‌اندازی
-
-### ۱. ساخت محیط مجازی و نصب نیازمندی‌ها
-
+### ۱. پیش‌نیازها و نصب کتابخانه‌ها
 ```bash
-python -m venv .venv
-# فعال‌سازی در لینوکس/مک:
-source .venv/bin/activate
-# فعال‌سازی در ویندوز:
-.venv\Scripts\activate
-
-pip install -r requirements.txt
+pip install torch transformers datasets pandas openpyxl evaluate seqeval tqdm
 ```
 
-### ۲. پیش‌نیازمندی‌ها (`requirements.txt`)
-کتابخانه‌های اصلی مورد استفاده:
-```text
-torch
-transformers
-datasets
-evaluate
-seqeval
-pandas
-openpyxl
-tqdm
-anthropic
-google-genai
-```
-
----
-
-## 🔄 مراحل اجرای پایپ‌لاین
-
-### گام اول: آماده‌سازی و استخراج داده با LLM
-برای استخراج و ممیزی اولیه آگهی‌های روزنامه رسمی:
-```bash
-python gemini_pipeline.py
-```
-
-### گام دوم: ساخت دیتاست‌های هم‌ترازی و روابط
-جهت تبدیل خروجی‌های ساختاریافته به فرمت BIO و ساخت دیتاست روابط:
-```bash
-python build_relation_dataset.py
-```
-
-### گام سوم: فاین‌تیونینگ مدل‌ها
-آموزش مدل‌های ParsBERT برای NER و مدل دوم برای دسته‌بندی روابط:
+### ۲. آموزش مدل اول (ParsBERT NER)
 ```bash
 python train_parsbert_local.py
+```
+
+### ۳. ساخت دیتابیس و آموزش مدل دوم (Relation Classifier)
+```bash
+python build_relation_dataset.py
 python train_relation_classifier.py
 ```
 
-### گام چهارم: استنباط نهایی و ساخت پروفایل‌ها
-اجرای اسکریپت استنباط جهت تجمیع پروفایل افراد هدف و تولید فایل JSON نهایی:
+### ۴. ساخت فایل سابمیشن نهایی
 ```bash
-python solve_phase3_master.py
+python solve_phase3_excel.py
+```
+*خروجی نهایی در فایل `submission_phase3_excel.json` ذخیره می‌شود.*
+
+---
+**توسعه‌یافته برای مسابقه هوش مصنوعی روزنامه رسمی (۱۴۰۵ / ۲۰۲۶)**
 ```
 
 ---
 
-## ⚠️ ملاحظات امنیتی
-
-* **کلیدهای API:** هرگز کلیدهای API شخصی (Gemini یا OpenModel) را درون گیت‌هاب Push نکنید. از متغیرهای محیطی (`.env`) استفاده کنید.
-* **داده‌های مسابقه:** داده‌های اصلی در فایل `.gitignore` استثنا شده‌اند تا از آپلود حجم‌های سنگین جلوگیری شود.
-
+تمام مستندات، ساختار فایل Word، گزارش علمی ۷ بخشی و فایل README.md با رعایت تمامی استانداردها و قیود اعلام‌شده توسط شما آماده گردید.
